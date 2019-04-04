@@ -11,7 +11,6 @@ let gameRules;
 let font;
 const IMAGES = {};
 let resetButton;
-let explosionParticles = []
 
 // consts
 let w = 732;
@@ -20,7 +19,6 @@ let s = 7;
 let starDotsCount = 6;
 let ftlDriveDotsCount = 100;
 let starGateRadius = 100;
-let triggerExplosions = {};
 
 // ------------------------------------------------------- CLASSES ----------------------------------------- //
 
@@ -313,8 +311,6 @@ class Ufo {
   shooted() {
     const checkShot = dist(mouseX, mouseY, this.x, this.y);
     if(checkShot <= (this.size * 2) && this.shootable) {
-     // triggerExplosions.x  = mouseX;
-     // triggerExplosions.y  = mouseY;
       this.destroyUfo();
     }
   }
@@ -350,41 +346,6 @@ class Laser {
       laserShot = null;  
     }
   }
-}
-
-// class ExplosionParticle {
-//   constructor() {
-//     this.size = 1;
-//     this.velX = random(-0.1,0.1);
-//     this.velY = random(-0.1,0.1);
-//     this.gravity = random(-0.1,0.1);
-//     this.x;
-//     this.y;
-//     this.range = 1;
-//   }
-
-//   generateExplosion(x, y) {
-//     console.log('generateExplosion', x, y)
-//     this.x = x;
-//     this.y = y;
-//     fill(color('yellow'));
-//     ellipse(this.x, this.y, this.size, this.size);
-//   }
-
-//   goExplode() {
-//     this.x += this.velX;
-//     this.velX += this.gravity;
-//     this.y += this.velY;
-//     this.velY += this.gravity;
-//     if(this.size < 5) {
-//       this.size++;
-//     } 
-//   }
-// }
-
-
-class ExplodeParticle {
-  
 }
 
 // ---------------------------------------------- FUNCTIONS ------------------------------------------ //
@@ -425,12 +386,6 @@ function populateShellGate() {
       }
     }
   }
-}
-
-function populateExplosionsParticles() {
-  for(let i = 0; i < 20; i++) {
-    explosionParticles.push(new ExplosionParticle());
-  } 
 }
 
 
@@ -503,15 +458,6 @@ function intro() {
   }
 }
 
-function explosions() {
-  if ( Object.keys(triggerExplosions).length) {
-    explosionParticles.forEach((particle) => {
-      particle.generateExplosion(triggerExplosions.x, triggerExplosions.y);
-      particle.goExplode();
-    })
-  }
-}
-
 
 function playRound() {
   const actualGameLevel = gameRules.getGameLevel();
@@ -569,7 +515,6 @@ function setup() {
   moon = new Moon(w / 2, h / 2, s);
   stars = new Stars(w, h);
   earth = new Earth();
-  populateExplosionsParticles();
   populateFtlDriveDots();
   populateStarGate();
   populateShellGate();
@@ -590,15 +535,12 @@ function draw() {
   openStarGatePortal();
   pop();
   laserShooting();
-  explosions();
   intro();
   translate(width/2,height/2,0);
   earth.drawEarth();
 }
 
 function mousePressed() {
-  triggerExplosions.x  = mouseX;  //remove
-  triggerExplosions.y  = mouseY;  //remove
   const level = gameRules.getGameLevel();
   ufos[level].forEach(ufo => {
     ufo.shooted();
