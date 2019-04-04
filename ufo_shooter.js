@@ -19,6 +19,7 @@ let s = 7;
 let starDotsCount = 6;
 let ftlDriveDotsCount = 100;
 let starGateRadius = 100;
+const particlesExplosionCount = 30;
 
 // ------------------------------------------------------- CLASSES ----------------------------------------- //
 
@@ -388,6 +389,38 @@ function populateShellGate() {
   }
 }
 
+function populateExplosionParticles(x, y) {
+  let particles = [];
+  for(var i = 0; i < particlesExplosionCount; i++) {
+    particles.push(new ExplosionParticles(x, y));
+  }
+  return particles;
+}
+
+function explodeWithParticles(particles) {
+  particles.forEach((particle) => {
+    particle.explode()
+  })
+}
+
+class ExplosionParticle {
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    this.vel = p5.Vector.random2D();
+    this.gravity = createVector(0, 0.3);
+    this.vel.mult(random(1, 6));
+    this.lifeSpan = 255;
+  }
+
+  explode() {
+    this.vel.add(this.gravity);
+    this.position.add(this.vel);
+    this.lifespan -=10;
+    stroke(255, this.lifeSpan);
+    strokeWeight(2);
+    point(this.position.x, this.position.y);
+  }
+}
 
 function populateUfos() {
   const levels = gameRules.getAllLevels();
